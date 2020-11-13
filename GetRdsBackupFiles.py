@@ -65,9 +65,8 @@ def downbakupfile(AccessKeyId, AccessKeySecret, args):
         for i in range(len(backupdetail)):
             bakfile_url = backupdetail[i]['BackupDownloadURL']  # 外网下载地址
             # bakfile_url = backupdetail[i]['BackupIntranetDownloadURL']   # 内网下载地址
-            re_result = re.findall("hins(.*).tar.gz", backupdetail[i]['BackupDownloadURL'])[0]  # 内网下载地址
-            # re_result = re.findall("hins(.*).tar.gz", backupdetail[i]['BackupIntranetDownloadURL'])[0]   # 外网下载地址
-            bakfile = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), args.d), 'hins' + re_result + '.tar.gz')
+            re_result = wget.filename_from_url(bakfile_url)
+            bakfile = os.path.join(os.path.join(os.path.dirname(os.path.abspath(__file__)), args.d),re_result)
             if os.path.exists(bakfile):
                 pass
             else:
@@ -86,9 +85,8 @@ def deletefile(dir):
             lastmodifytime = os.stat(filename).st_mtime
             endfiletime = time.time() - 3600 * 24 * 30
             if endfiletime > lastmodifytime:
-                if filename[-7:] == ".tar.gz":  # 删除后缀为 .tar.gz 的文件
-                    os.remove(filename)
-                    print("删除文件 %s 成功" % filename)
+                os.remove(filename)
+                print("删除文件 %s 成功" % filename)
         elif os.path.isdir(filename):  # 如果是目录则递归调用当前函数
             deletefile(filename)
 
